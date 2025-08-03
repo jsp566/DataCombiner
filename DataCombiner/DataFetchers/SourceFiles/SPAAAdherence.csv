@@ -1,0 +1,6 @@
+"Country","ParticipantName","Address","City","BIC","Type of External Identifier","External Identifier","Role","Readiness Date","Scheme Leaving Date","Scheme Options"
+"FRANCE","GoCardless SAS","7 rue de Madrid","Paris","GOAAFRP1XXX","","","Asset Broker","2024-12-02","",""
+"GERMANY","Token GmbH","Koepenicker Strasse 40-41","Berlin","","Enterprise number","HRB 217765","Asset Broker","2024-02-01","",""
+"IRELAND","TrueLayer (Ireland) Limited","6th Floor, 2 Grand Canal Square","Dublin","TRYEIE22XXX","LEI","8945004TO4J8AM6VZN18","Asset Broker","2024-02-01","",""
+"LITHUANIA","Yapily Connect UAB","Palangos g. 4-101","Vilnius","","Enterprise number","305602679","Asset Broker","2024-06-03","",""
+"SWEDEN","Tink AB","Vasagatan 11","Stockholm","","Enterprise number","556898-2192","Asset Broker","2024-03-04","",""
