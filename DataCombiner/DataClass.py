@@ -1,5 +1,5 @@
 import os
-import DataFetchers.util as util
+import DataCombiner.DataFetchers.util as util
 import pandas as pd
 
 class Dataset:
@@ -13,6 +13,7 @@ class Dataset:
         self.name = None
         self.sourceDataExtension = None
         self.columnTypes = None
+        self.documentation = None
 
     def downloadSourceFile(self):
         raise NotImplementedError("This method should be overridden by subclasses")
@@ -24,27 +25,33 @@ class Dataset:
             self.downloadSourceFile()
             return True
 
-        self.downloadSourceFile()
+        try: 
+            self.downloadSourceFile()
 
-        newHash = util.getFileHash(self.getFilePath(util.SourceFileFolderName, self.sourceDataExtension))
-
+            newHash = util.getFileHash(self.getFilePath(util.SourceFileFolderName, self.sourceDataExtension))
+        except Exception as e:
+            print(f"Error downloading source file: {e}")
+            return False
+        
         if oldHash != newHash:
             return True
 
         return False
 
 
-    def sourceFileToCommonFormat(self):
+    def sourceFileToCSV(self):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     def createIdToKeys(self):
         raise NotImplementedError
     
-    def update(self):
+    def update(self, forceUpdate=False):
         updated = self.updateSourceFile()
 
+        updated = updated or forceUpdate
+
         if updated:
-            self.sourceFileToCommonFormat()
+            self.sourceFileToCSV()
             
             # Implement this
             #self.createIdToKeys()
@@ -52,6 +59,9 @@ class Dataset:
         return updated
     
     def getFilePath(self, folderName, fileExtension="csv"):
+        # Make folder
+        util.createFolderIfNotExists(util.folder, folderName)
+
         return os.path.join(util.folder, folderName, f"{self.name}.{fileExtension}")
     
     def getSavedFiles(self, firstTime=True):

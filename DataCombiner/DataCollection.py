@@ -1,16 +1,16 @@
 class DataCollection:
-    
+    def __init__(self):
+        self.datasets = {}
 
-    
+
     def groupData(self):
         raise NotImplementedError
     
-    def update(self):
+    def update(self, forceUpdate=False):
         updated = False
         for dataset in self.datasets:
-            if dataset.update():
-                updated = True
-
+            updated |= dataset.update(forceUpdate=forceUpdate)
+        
         if updated:
             self.groupData()
 

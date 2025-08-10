@@ -1,7 +1,7 @@
 import pandas as pd
 
-import DataFetchers.util as util
-import DataFetchers.DataClass as DataClass
+import DataCombiner.DataFetchers.util as util
+import DataCombiner.DataClass as DataClass
 
 class SRTPAdherence(DataClass.Dataset):
     def __init__(self):
@@ -9,13 +9,14 @@ class SRTPAdherence(DataClass.Dataset):
         self.name = "SRTPAdherence"
         self.sourceDataExtension = "csv"
         self.columnTypes = {}
+        self.documentation = ""
 
     def downloadSourceFile(self):
         url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/srtp/srtp.csv"
         filePath = self.getFilePath(util.SourceFileFolderName)
         util.urlToFile(url, filePath)
 
-    def sourceFileToCommonFormat(self):
+    def sourceFileToCSV(self):
         filePath = self.getFilePath(util.SourceFileFolderName, self.sourceDataExtension)
         df = pd.read_csv(filePath, encoding='utf-8')
-        df.to_csv(self.getFilePath(util.CommonFormatFileFolderName), index=False, encoding='utf-8')
+        df.to_csv(self.getFilePath(util.CSVFileFolderName), index=False, encoding='utf-8')

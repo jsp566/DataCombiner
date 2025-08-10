@@ -3,10 +3,21 @@ from pathlib import Path
 import requests
 
 SourceFileFolderName = 'SourceFiles'
-CommonFormatFileFolderName = 'CommonFormatFiles'
+CSVFileFolderName = 'CSVFiles' # CSV files in common format
+EnhancedFormatFileFolderName = 'EnhancedFormatFiles' # Pickle files with enhanced format
 IdToKeysFileFolderName = 'IdToKeys'
 
 folder = os.path.dirname(__file__)
+
+class ColumnDescription:
+    def __init__(self):
+        self.name = None
+        self.description = None
+        self.datatype = None # e.g. "string", "int", "float", "date"
+        self.idtype = None # e.g. BIC, NAME, 
+        self.relationtype = None # e.g. self, sponsor, group, result
+
+
 
 def urlToFile(url, filePath):
     """Downloads a file from a URL and saves it to the specified file path."""
@@ -24,3 +35,9 @@ def getFileHash(filePath):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
+
+def createFolderIfNotExists(folderPath, folderName):
+    """Creates a folder if it does not already exist."""
+    fullPath = os.path.join(folderPath, folderName)
+    Path(fullPath).mkdir(parents=True, exist_ok=True)
+    return fullPath
