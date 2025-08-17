@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import requests
+from enum import Enum
 
 SourceFileFolderName = 'SourceFiles'
 CSVFileFolderName = 'CSVFiles' # CSV files in common format
@@ -16,6 +17,23 @@ class ColumnDescription:
         self.datatype = None # e.g. "string", "int", "float", "date"
         self.idtype = None # e.g. BIC, NAME, 
         self.relationtype = None # e.g. self, sponsor, group, result
+
+class FileType(Enum):
+    SourceFile = 1
+    CSVFile = 2
+    EnhancedFormatFile = 3
+    IdToKeysFile = 4
+
+class idtype(Enum):
+    BIC = 1
+    NAME = 2
+
+
+class relationtype(Enum):
+    SELF = 1
+    SPONSOR = 2
+    GROUP = 3
+    RESULT = 4
 
 
 
