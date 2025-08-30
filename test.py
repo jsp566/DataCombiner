@@ -9,6 +9,16 @@ import DataCombiner.DataFetchers.OctInstAdherence
 import DataCombiner.DataFetchers.SDDCoreAdherence
 import DataCombiner.DataFetchers.SDDB2BAdherence
 
+import sqlite3
+
+conn = sqlite3.connect('Database.db')
+
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///Database.db')
+conn = engine.connect()
+
+input("123")
+
 DataCombiner.DataFetchers.SIC.SIC().update()
 DataCombiner.DataFetchers.BundesSCL.BundesSCL().update()
 DataCombiner.DataFetchers.SepaAdherence.SepaAdherence().update()
