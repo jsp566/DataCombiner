@@ -5,9 +5,9 @@ Get source files (done)
 
 To CSV (done)
 
-Structure data
+Load data to DB with indexes (done)
 
-Load data to DB with indexes
+Structure data
 
 Group Data (disjoint sets)
 

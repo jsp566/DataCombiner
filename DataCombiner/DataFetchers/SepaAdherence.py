@@ -1,22 +1,34 @@
 import pandas as pd
 
-import DataCombiner.DataFetchers.util as util
+import DataCombiner.util as util
 import DataCombiner.DataClass as DataClass
+
 
 class SepaAdherence(DataClass.Dataset):
     def __init__(self):
         super().__init__()
         self.name = "SepaAdherence"
         self.sourceDataExtension = "csv"
-        self.columnTypes = {}
-        self.documentation = ""
+        self.columnTypes = {
+            "Country": None,
+            "ParticipantName": None,
+            "Address": None,
+            "City": None,
+            "BIC": None,
+            "Readiness Date": None,
+            "Scheme Leaving Date": None,
+            "Scheme Options": None,
+        }
+        self.documentation = "https://www.europeanpaymentscouncil.eu/what-we-do/be-involved/register-participants/registers-participants-sepa-payment-schemes"
 
     def downloadSourceFile(self):
         url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/sct/sct.csv"
         filePath = self.getFilePath(util.SourceFileFolderName)
         util.urlToFile(url, filePath)
-    
+
     def sourceFileToCSV(self):
         filePath = self.getFilePath(util.SourceFileFolderName, self.sourceDataExtension)
-        df = pd.read_csv(filePath, encoding='utf-8')
-        df.to_csv(self.getFilePath(util.CSVFileFolderName), index=False, encoding='utf-8')
+        df = pd.read_csv(filePath, encoding="utf-8")
+        df.to_csv(
+            self.getFilePath(util.CSVFileFolderName), index=False, encoding="utf-8"
+        )

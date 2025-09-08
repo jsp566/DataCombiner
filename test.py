@@ -1,5 +1,5 @@
 import DataCombiner.DataFetchers.SIC
-import DataCombiner.DataFetchers.BundesSCL
+import DataCombiner.DataFetchers.BundesSCLFromURL
 import DataCombiner.DataFetchers.SepaAdherence
 import DataCombiner.DataFetchers.SepaInstAdherence
 import DataCombiner.DataFetchers.SRTPAdherence
@@ -9,23 +9,18 @@ import DataCombiner.DataFetchers.OctInstAdherence
 import DataCombiner.DataFetchers.SDDCoreAdherence
 import DataCombiner.DataFetchers.SDDB2BAdherence
 
-import sqlite3
+datasets = [
+    DataCombiner.DataFetchers.SIC.SIC(),
+    DataCombiner.DataFetchers.BundesSCLFromURL.BundesSCLFromURL(),
+    DataCombiner.DataFetchers.SepaAdherence.SepaAdherence(),
+    DataCombiner.DataFetchers.SepaInstAdherence.SepaInstAdherence(),
+    DataCombiner.DataFetchers.SRTPAdherence.SRTPAdherence(),
+    DataCombiner.DataFetchers.SPAAAdherence.SPAAAdherence(),
+    DataCombiner.DataFetchers.VOPAdherence.VOPAdherence(),
+    DataCombiner.DataFetchers.OctInstAdherence.OctInstAdherence(),
+    DataCombiner.DataFetchers.SDDCoreAdherence.SDDCoreAdherence(),
+    DataCombiner.DataFetchers.SDDB2BAdherence.SDDB2BAdherence(),
+]
 
-conn = sqlite3.connect('Database.db')
-
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///Database.db')
-conn = engine.connect()
-
-input("123")
-
-DataCombiner.DataFetchers.SIC.SIC().update()
-DataCombiner.DataFetchers.BundesSCL.BundesSCL().update()
-DataCombiner.DataFetchers.SepaAdherence.SepaAdherence().update()
-DataCombiner.DataFetchers.SepaInstAdherence.SepaInstAdherence().update()
-DataCombiner.DataFetchers.SRTPAdherence.SRTPAdherence().update()
-DataCombiner.DataFetchers.SPAAAdherence.SPAAAdherence().update()
-DataCombiner.DataFetchers.VOPAdherence.VOPAdherence().update()
-DataCombiner.DataFetchers.OctInstAdherence.OctInstAdherence().update()
-DataCombiner.DataFetchers.SDDCoreAdherence.SDDCoreAdherence().update()
-DataCombiner.DataFetchers.SDDB2BAdherence.SDDB2BAdherence().update()
+for dataset in datasets:
+    dataset.insertCSV()

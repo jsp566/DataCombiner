@@ -1,5 +1,5 @@
 import os
-import DataCombiner.DataFetchers.util as util
+import DataCombiner.util as util
 import pandas as pd
 
 class Dataset:
@@ -99,3 +99,29 @@ class Dataset:
     
     def keysToResults(self, keys):
         raise NotImplementedError
+
+    def createTable(self):
+        query = f'''CREATE TABLE IF NOT EXISTS "{self.name}" (
+                "RowId"	INTEGER NOT NULL UNIQUE PRIMARY KEY,
+                "GroupId" INTEGER'''
+        for column in self.columnTypes:
+            query += f''',
+                "{column}" TEXT'''
+        query += ");"
+        util.SQLcons["SQLite"].execute(query)
+        util.SQLcons["SQLite"].commit()
+
+    def dropTable(self):
+        query = f'''DROP TABLE IF EXISTS "{self.name}";'''
+        util.SQLcons["SQLite"].execute(query)
+        util.SQLcons["SQLite"].commit()
+
+    def deleteAllRows(self):
+        query = f'''DELETE FROM "{self.name}";'''
+        util.SQLcons["SQLite"].execute(query)
+        util.SQLcons["SQLite"].commit()
+
+    def insertCSV(self):
+        self.deleteAllRows()
+        df = pd.read_csv(self.getFilePath(util.CSVFileFolderName), dtype=str)
+        df.to_sql(self.name, util.SQLcons["SQLite"], if_exists="append", index=True, index_label="RowId")
