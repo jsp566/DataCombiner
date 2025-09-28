@@ -1,6 +1,6 @@
 class DataCollection:
-    def __init__(self):
-        self.datasets = {}
+    def __init__(self, datasets):
+        self.datasets = datasets
 
 
     def groupData(self):
