@@ -1,13 +1,13 @@
 import pandas as pd
 
-import DataCombiner.util as util
-import DataCombiner.DataClass as DataClass
+import util as util
+import DataSaving.DataFetcher as DataFetcher
 
 
-class SRTPAdherence(DataClass.Dataset):
+class SepaInstAdherence(DataFetcher.DataFetcher):
     def __init__(self):
         super().__init__()
-        self.name = "SRTPAdherence"
+        self.name = "SepaInstAdherence"
         self.sourceDataExtension = "csv"
         self.columnTypes = {
             "Country": None,
@@ -15,8 +15,6 @@ class SRTPAdherence(DataClass.Dataset):
             "Address": None,
             "City": None,
             "BIC": None,
-            "Type of External Identifier": None,
-            "External Identifier": None,
             "Readiness Date": None,
             "Scheme Leaving Date": None,
             "Scheme Options": None,
@@ -24,7 +22,7 @@ class SRTPAdherence(DataClass.Dataset):
         self.documentation = "https://www.europeanpaymentscouncil.eu/what-we-do/be-involved/register-participants/registers-participants-sepa-payment-schemes"
 
     def downloadSourceFile(self):
-        url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/srtp/srtp.csv"
+        url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/sct_inst/sct_inst.csv"
         filePath = self.getFilePath(util.SourceFileFolderName)
         util.urlToFile(url, filePath)
 

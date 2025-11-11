@@ -1,13 +1,13 @@
 import pandas as pd
 
-import DataCombiner.util as util
-import DataCombiner.DataClass as DataClass
+import util as util
+import DataSaving.DataFetcher as DataFetcher
 
 
-class SDDB2BAdherence(DataClass.Dataset):
+class SepaAdherence(DataFetcher.DataFetcher):
     def __init__(self):
         super().__init__()
-        self.name = "SDDB2BAdherence"
+        self.name = "SepaAdherence"
         self.sourceDataExtension = "csv"
         self.columnTypes = {
             "Country": None,
@@ -22,7 +22,7 @@ class SDDB2BAdherence(DataClass.Dataset):
         self.documentation = "https://www.europeanpaymentscouncil.eu/what-we-do/be-involved/register-participants/registers-participants-sepa-payment-schemes"
 
     def downloadSourceFile(self):
-        url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/sdd_b2b/sdd_b2b.csv"
+        url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/sct/sct.csv"
         filePath = self.getFilePath(util.SourceFileFolderName)
         util.urlToFile(url, filePath)
 

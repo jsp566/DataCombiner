@@ -4,15 +4,16 @@ import requests
 from enum import Enum
 import sqlite3
 
-SourceFileFolderName = 'SourceFiles'
-CSVFileFolderName = 'CSVFiles' # CSV files in common format
-EnhancedFormatFileFolderName = 'EnhancedFormatFiles' # Pickle files with enhanced format
-IdToKeysFileFolderName = 'IdToKeys'
 
 folder = os.path.dirname(__file__)
-
+SourceFileFolderName = 'SourceFiles'
 SQLcons = {"SQLite": sqlite3.connect('Database.db')}
 
+
+TableNames = {
+    "SourceFiles": "Data.SourceFiles",
+    "DataRows": "Data.DataRows"
+}
 
 class ColumnDescription:
     def __init__(self):
@@ -21,6 +22,27 @@ class ColumnDescription:
         self.datatype = None # e.g. "string", "int", "float", "date"
         self.idtype = None # e.g. BIC, NAME, 
         self.relationtype = None # e.g. self, sponsor, group, result
+
+
+class DatasetId(Enum):
+    BSBDirectory = 1
+    BSBKeys = 2
+    BundesSCLFromURL = 3
+    OctInstAdherence = 4
+    SDDB2BAdherence = 5
+    SDDCoreAdherence = 6
+    SepaAdherence = 7
+    SepaInstAdherence = 8
+    SIC = 9
+    SPAAAdherence = 10
+    SRTPAdherence = 11
+    VOPAdherence = 12
+
+class FileStatus(Enum):
+    New = 1
+    Processed = 2
+    Error = 3
+
 
 class FileType(Enum):
     SourceFile = 1
@@ -49,14 +71,6 @@ def urlToFile(url, filePath):
         for chunk in response.iter_content(chunk_size=10 * 1024):
             file.write(chunk)
     
-def getFileHash(filePath):
-    """Calculates the hash of a file."""
-    import hashlib
-    hash_md5 = hashlib.md5()
-    with open(filePath, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
 
 def createFolderIfNotExists(folderPath, folderName):
     """Creates a folder if it does not already exist."""

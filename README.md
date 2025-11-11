@@ -1,13 +1,12 @@
 # DataCombiner
 
 Data flow:
-Get source files (done)
+Get source files, insert info into table
 
-To CSV (done)
+Flatten to CSV, insert each row into table
+Interpret, load data into db with foreign keys
 
-Load data to DB with indexes (done)
 
-Structure data
 
 Group Data (disjoint sets)
 
@@ -24,6 +23,4 @@ Searches DB with those parameters with intersection, gets ids
 Shows count for each table, a summary, and all unique identifiers
 
 Click on each tab for full table
-
-
 

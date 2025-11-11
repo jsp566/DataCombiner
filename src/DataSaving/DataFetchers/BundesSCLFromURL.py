@@ -1,10 +1,10 @@
 import pandas as pd
 
-import DataCombiner.util as util
-import DataCombiner.DataClass as DataClass
+import util as util
+import DataSaving.DataFetcher as DataFetcher
 
 
-class BundesSCLFromURL(DataClass.Dataset):
+class BundesSCLFromURL(DataFetcher.DataFetcher):
     def __init__(self):
         super().__init__()
         self.name = "BundesSCLFromURL"
