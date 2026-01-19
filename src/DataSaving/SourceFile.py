@@ -1,3 +1,4 @@
+import datetime
 import util as util
 import hashlib
 import os
@@ -6,36 +7,41 @@ class SourceFile:
     def __init__(self, connection, sourceFileFolder, DatasetId):
         self.connection = connection
         self.sourceFileFolder = sourceFileFolder
-        self.DatasetId = DatasetId
         self.TableName = util.TableNames["SourceFiles"]
-        self.FileId = None
+
+        self.DatasetId = DatasetId
+        self.SourceFileId = None
         self.path = None
+
         self.hash = None
-        self.numRows = None
         self.downloadTimestamp = None
+
         self.validFromTimestamp = None
+        self.numRows = None
+
 
     def insertSourceFileIntoDB(self):
         query = f"""INSERT INTO {self.TableName} (DatasetId, Status) VALUES (?, ?)"""
-        cursor = self.connection.execute(query, (self.DatasetId, util.FileStatus.New.value))
-        self.FileId = cursor.lastrowid
-        self.path = os.path.join(self.sourceFileFolder, str(self.FileId))
+        cursor = self.connection.execute(query, (self.DatasetId.value, util.FileStatus.New.value))
+        self.SourceFileId = cursor.lastrowid
+        self.path = os.path.join(self.sourceFileFolder, str(self.SourceFileId))
 
     def updateFileStatus(self, status):
-        query = f"""UPDATE {self.TableName} SET Status = ? WHERE FileId = ?"""
-        self.connection.execute(query, (status.value, self.FileId))
+        query = f"""UPDATE {self.TableName} SET Status = ? WHERE SourceFileId = ?"""
+        self.connection.execute(query, (status.value, self.SourceFileId))
     
     def addMetadataToDB(self):
         query = f"""UPDATE {self.TableName} 
-                   SET Hash = ?, NumRows = ?, DownloadTimestamp = ?, ValidFromTimestamp = ? 
-                   WHERE FileId = ?"""
-        self.connection.execute(query, (self.hash, self.numRows, self.downloadTimestamp, self.validFromTimestamp, self.FileId))
+                   SET Hash = ?, DownloadTimestamp = ?, NumRows = ?, ValidFromTimestamp = ?
+                   WHERE SourceFileId = ?"""
+        self.connection.execute(query, (self.hash, self.downloadTimestamp, self.numRows, self.validFromTimestamp, self.SourceFileId))
+        self.updateFileStatus(util.FileStatus.FileInfoAdded)
 
     def getMetadataFromDB(self):
         query = f"""SELECT Hash, NumRows, DownloadTimestamp, ValidFromTimestamp 
                    FROM {self.TableName} 
-                   WHERE FileId = ?"""
-        cursor = self.connection.execute(query, (self.FileId,))
+                   WHERE SourceFileId = ?"""
+        cursor = self.connection.execute(query, (self.SourceFileId,))
         row = cursor.fetchone()
         if row:
             self.hash = row[0]
@@ -46,8 +52,8 @@ class SourceFile:
     def updateToError(self, Note):
         query = f"""UPDATE {self.TableName} 
                    SET Status = ?, Note = ? 
-                   WHERE FileId = ?"""
-        self.connection.execute(query, (util.FileStatus.Error.value, Note, self.FileId))
+                   WHERE SourceFileId = ?"""
+        self.connection.execute(query, (util.FileStatus.Error.value, Note, self.SourceFileId))
 
     def calculateFileHash(self):
         hasher = hashlib.sha256()
@@ -56,3 +62,8 @@ class SourceFile:
                 hasher.update(chunk)
                 
         self.hash = hasher.hexdigest()
+
+    def getDownloadTimestamp(self):
+        creationtime = os.path.getctime(self.path)
+        dateTimeObj =  datetime.datetime.fromtimestamp(creationtime)
+        self.downloadTimestamp =  dateTimeObj.isoformat()

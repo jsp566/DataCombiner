@@ -1,18 +1,20 @@
 import os
 from pathlib import Path
 import requests
-from enum import Enum
+
 import sqlite3
 
 
 folder = os.path.dirname(__file__)
-SourceFileFolderName = 'SourceFiles'
-SQLcons = {"SQLite": sqlite3.connect('Database.db')}
+SourceFileFolderName = 'DataStorage/SourceFiles'
+SQLcons = {"SQLite": sqlite3.connect('DataStorage/Database.db')}
 
 
 TableNames = {
-    "SourceFiles": "Data.SourceFiles",
-    "DataRows": "Data.DataRows"
+    "SourceFiles": "SourceFiles",
+    "DataRows": "DataRows",
+    "BankCodes": "BankCodes",
+    "BankCodeRelations": "BankCodeRelations",
 }
 
 class ColumnDescription:
@@ -22,45 +24,6 @@ class ColumnDescription:
         self.datatype = None # e.g. "string", "int", "float", "date"
         self.idtype = None # e.g. BIC, NAME, 
         self.relationtype = None # e.g. self, sponsor, group, result
-
-
-class DatasetId(Enum):
-    BSBDirectory = 1
-    BSBKeys = 2
-    BundesSCLFromURL = 3
-    OctInstAdherence = 4
-    SDDB2BAdherence = 5
-    SDDCoreAdherence = 6
-    SepaAdherence = 7
-    SepaInstAdherence = 8
-    SIC = 9
-    SPAAAdherence = 10
-    SRTPAdherence = 11
-    VOPAdherence = 12
-
-class FileStatus(Enum):
-    New = 1
-    Processed = 2
-    Error = 3
-
-
-class FileType(Enum):
-    SourceFile = 1
-    CSVFile = 2
-    EnhancedFormatFile = 3
-    IdToKeysFile = 4
-
-class idtype(Enum):
-    BIC = 1
-    NAME = 2
-
-
-class relationtype(Enum):
-    SELF = 1
-    SPONSOR = 2
-    GROUP = 3
-    RESULT = 4
-
 
 
 def urlToFile(url, filePath):

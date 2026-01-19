@@ -1,14 +1,16 @@
 # DataCombiner
 
-Data flow:
-Get source files, insert info into table
+For each file type have update frequency
+If time is past frequency, do update flow
 
-Flatten to CSV, insert each row into table
-Interpret, load data into db with foreign keys
+Update Data flow:
+Make new fileid (generic)
+Get source file (data specific)
+insert file info into db (generic and specific)
+Read: insert each row into db (specific)
+Interpret: based on each row put data into db with foreign keys (specific)
 
-
-
-Group Data (disjoint sets)
+Run grouping algorithm: disjoint sets (generic)
 
 
 Search flow:

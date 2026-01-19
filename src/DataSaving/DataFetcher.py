@@ -1,6 +1,6 @@
 import os
 import util as util
-import DataSaving.SourceFile
+import DataSaving.SourceFile as SourceFile
 import datetime
 
 class DataFetcher:
@@ -14,6 +14,9 @@ class DataFetcher:
     def downloadSourceFile(self, downloadedFile):
         raise NotImplementedError("This method should be overridden by subclasses")
 
+    def getValidFromTimestamp(self, downloadedFile):
+        raise NotImplementedError("This method should be overridden by subclasses")
+
     def createDataRowGenerator(self, downloadedFile):
         raise NotImplementedError("This method should be overridden by subclasses")
 
@@ -24,11 +27,17 @@ class DataFetcher:
         # Create row in DB and get its ID
         downloadedFile = SourceFile.SourceFile(self.connection, self.SourceFileFolder, self.DatasetId)
         downloadedFile.insertSourceFileIntoDB()
+        self.connection.commit()
 
-        self.downloadSourceFile(downloadedFile)
-        downloadedFile.downloadTimestamp = datetime.datetime.now().isoformat()
+        self.downloadSourceFile(downloadedFile.path)
+        downloadedFile.updateFileStatus(util.FileStatus.Downloaded)
+        self.connection.commit()
+
+        downloadedFile.getDownloadTimestamp()
         downloadedFile.calculateFileHash()
         downloadedFile.addMetadataToDB()
+        self.connection.commit()
+
         return downloadedFile
     
     def insertSourceFileRowsIntoDB(self, downloadedFile):
@@ -36,19 +45,21 @@ class DataFetcher:
 
         rowCounter = 0
         for row in rows:
-            row.insertDataRowIntoDB(downloadedFile.FileId, self.connection)
+            row.insertDataRowIntoDB(self.connection)
             self.interpretDataRow(row)
             rowCounter += 1
         
-        return rowCounter
+        downloadedFile.numRows = rowCounter
 
 
     def getNewData(self):
         downloadedFile = self.getNewSourceFile()      
 
-        rowCounter = self.insertSourceFileRowsIntoDB(downloadedFile)
+        self.getValidFromTimestamp(downloadedFile)
 
-        downloadedFile.numRows = rowCounter
+        self.insertSourceFileRowsIntoDB(downloadedFile)
+        
         downloadedFile.addMetadataToDB()
+        
         downloadedFile.updateFileStatus(util.FileStatus.Processed)
         self.connection.commit()
