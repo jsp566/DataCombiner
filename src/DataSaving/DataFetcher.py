@@ -1,5 +1,6 @@
 import os
 import util as util
+import enums as enums
 import DataSaving.SourceFile as SourceFile
 import datetime
 
@@ -14,7 +15,7 @@ class DataFetcher:
     def downloadSourceFile(self, downloadedFile):
         raise NotImplementedError("This method should be overridden by subclasses")
 
-    def getValidFromTimestamp(self, downloadedFile):
+    def getValidFromDatetime(self, downloadedFile):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     def createDataRowGenerator(self, downloadedFile):
@@ -30,10 +31,10 @@ class DataFetcher:
         self.connection.commit()
 
         self.downloadSourceFile(downloadedFile.path)
-        downloadedFile.updateFileStatus(util.FileStatus.Downloaded)
+        downloadedFile.updateFileStatus(enums.FileStatus.Downloaded)
         self.connection.commit()
 
-        downloadedFile.getDownloadTimestamp()
+        downloadedFile.getDownloadDatetime()
         downloadedFile.calculateFileHash()
         downloadedFile.addMetadataToDB()
         self.connection.commit()
@@ -61,5 +62,5 @@ class DataFetcher:
         
         downloadedFile.addMetadataToDB()
         
-        downloadedFile.updateFileStatus(util.FileStatus.Processed)
+        downloadedFile.updateFileStatus(enums.FileStatus.Processed)
         self.connection.commit()

@@ -1,10 +1,11 @@
 
 from datetime import datetime
 import util as util
+import enums as enums
 
 sqlcon = util.SQLcons["SQLite"]
 sourcefilefolder = util.SourceFileFolderName
-datasetid = util.DatasetId.SIC
+datasetid = enums.DatasetId.SIC
 
 import DataSaving.SourceFile as SourceFile
 
@@ -18,10 +19,10 @@ import DataSaving.DataFetchers.SIC as SICFetcher
 fetcher = SICFetcher.SIC(sqlcon, sourcefilefolder)
 fetcher.downloadSourceFile(downloadedFile.path)
 
-downloadedFile.updateFileStatus(util.FileStatus.Downloaded)
+downloadedFile.updateFileStatus(enums.FileStatus.Downloaded)
 
 # get meta data
-downloadedFile.getDownloadTimestamp()
+downloadedFile.getDownloadDatetime()
 downloadedFile.calculateFileHash()
 downloadedFile.addMetadataToDB()
 
@@ -45,7 +46,7 @@ downloadedFile.numRows = rowCounter
 
 downloadedFile.addMetadataToDB()
 
-downloadedFile.updateFileStatus(util.FileStatus.Processed)
+downloadedFile.updateFileStatus(enums.FileStatus.Processed)
 
 
 

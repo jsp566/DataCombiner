@@ -1,5 +1,6 @@
-import datetime
+from datetime import datetime
 import util as util
+import enums as enums
 import hashlib
 import os
 
@@ -14,15 +15,15 @@ class SourceFile:
         self.path = None
 
         self.hash = None
-        self.downloadTimestamp = None
+        self.downloadDatetime = None
 
-        self.validFromTimestamp = None
+        self.validFromDatetime = None
         self.numRows = None
 
 
     def insertSourceFileIntoDB(self):
         query = f"""INSERT INTO {self.TableName} (DatasetId, Status) VALUES (?, ?)"""
-        cursor = self.connection.execute(query, (self.DatasetId.value, util.FileStatus.New.value))
+        cursor = self.connection.execute(query, (self.DatasetId.value, enums.FileStatus.New.value))
         self.SourceFileId = cursor.lastrowid
         self.path = os.path.join(self.sourceFileFolder, str(self.SourceFileId))
 
@@ -32,28 +33,18 @@ class SourceFile:
     
     def addMetadataToDB(self):
         query = f"""UPDATE {self.TableName} 
-                   SET Hash = ?, DownloadTimestamp = ?, NumRows = ?, ValidFromTimestamp = ?
+                   SET Hash = ?, DownloadDatetime = ?, NumRows = ?, ValidFromDatetime = ?
                    WHERE SourceFileId = ?"""
-        self.connection.execute(query, (self.hash, self.downloadTimestamp, self.numRows, self.validFromTimestamp, self.SourceFileId))
-        self.updateFileStatus(util.FileStatus.FileInfoAdded)
-
-    def getMetadataFromDB(self):
-        query = f"""SELECT Hash, NumRows, DownloadTimestamp, ValidFromTimestamp 
-                   FROM {self.TableName} 
-                   WHERE SourceFileId = ?"""
-        cursor = self.connection.execute(query, (self.SourceFileId,))
-        row = cursor.fetchone()
-        if row:
-            self.hash = row[0]
-            self.numRows = row[1]
-            self.downloadTimestamp = row[2]
-            self.validFromTimestamp = row[3]
+        DownloadDatetimestr = self.downloadDatetime.isoformat() if self.downloadDatetime is not None else None
+        ValidFromDatetimestr = self.validFromDatetime.isoformat() if self.validFromDatetime is not None else None
+        self.connection.execute(query, (self.hash, DownloadDatetimestr, self.numRows, ValidFromDatetimestr, self.SourceFileId))
+        self.updateFileStatus(enums.FileStatus.FileInfoAdded)
 
     def updateToError(self, Note):
         query = f"""UPDATE {self.TableName} 
                    SET Status = ?, Note = ? 
                    WHERE SourceFileId = ?"""
-        self.connection.execute(query, (util.FileStatus.Error.value, Note, self.SourceFileId))
+        self.connection.execute(query, (enums.FileStatus.Error.value, Note, self.SourceFileId))
 
     def calculateFileHash(self):
         hasher = hashlib.sha256()
@@ -63,7 +54,6 @@ class SourceFile:
                 
         self.hash = hasher.hexdigest()
 
-    def getDownloadTimestamp(self):
+    def getDownloadDatetime(self):
         creationtime = os.path.getctime(self.path)
-        dateTimeObj =  datetime.datetime.fromtimestamp(creationtime)
-        self.downloadTimestamp =  dateTimeObj.isoformat()
+        self.downloadDatetime =  datetime.fromtimestamp(creationtime)
