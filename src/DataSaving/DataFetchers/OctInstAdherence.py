@@ -1,12 +1,16 @@
 import pandas as pd
+import csv
 
+import enums as enums
 import util as util
 import DataSaving.DataFetcher as DataFetcher
+import DataSaving.DataRow as DataRow
 
 
 class OctInstAdherence(DataFetcher.DataFetcher):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, connection, SourceFileFolder):
+        super().__init__(connection, SourceFileFolder)
+        self.DatasetId = enums.DatasetId.OctInstAdherence
         self.name = "OctInstAdherence"
         self.sourceDataExtension = "csv"
         self.columnTypes = {
@@ -21,10 +25,10 @@ class OctInstAdherence(DataFetcher.DataFetcher):
             "Scheme Options": None,
         }
         self.documentation = "https://www.europeanpaymentscouncil.eu/what-we-do/be-involved/register-participants/registers-participants-sepa-payment-schemes"
+        self.keyColumns = ["BIC"]
 
-    def downloadSourceFile(self):
+    def downloadSourceFile(self, filePath):
         url = "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/oct_inst/oct_inst.csv"
-        filePath = self.getFilePath(util.SourceFileFolderName)
         util.urlToFile(url, filePath)
 
     def sourceFileToCSV(self):
@@ -33,3 +37,24 @@ class OctInstAdherence(DataFetcher.DataFetcher):
         df.to_csv(
             self.getFilePath(util.CSVFileFolderName), index=False, encoding="utf-8"
         )
+
+    def getValidFromDatetime(self, downloadedFile):
+        downloadedFile.validFromDatetime = downloadedFile.downloadDatetime
+        
+    def createDataRowGenerator(self, downloadedFile):
+        with open(downloadedFile.path, "r") as f:
+            data = csv.DictReader(f)
+            for entryindex, entry in enumerate(data, start=1):
+                key = ",".join([str(entry[col]) for col in self.keyColumns])
+                row = DataRow.DataRow(self.DatasetId, downloadedFile.SourceFileId, entryindex, key, entry)
+                yield row
+
+    def interpretDataRow(self, row):
+
+        # ParticipantName
+
+        # BIC
+
+        # Role 
+        
+        raise NotImplementedError("This method should be overridden by subclasses?")

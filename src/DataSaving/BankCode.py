@@ -38,6 +38,7 @@ def interpretBankCode(connection, bankCodeTypeId, bankCode, dataRow, relationTyp
 
 class BankCode:
     def __init__(self, bankCodeTypeId, bankCode):
+        self.BankCodeId = None
         self.BankCodeTypeId = bankCodeTypeId
         self.BankCode = bankCode
         self.GroupId = None
@@ -50,6 +51,7 @@ class BankCode:
         cursor = connection.execute(
             query, (self.BankCodeTypeId, self.BankCode)
         )
+        self.BankCodeId = cursor.lastrowid
 
 
 class BankCodeRelation:

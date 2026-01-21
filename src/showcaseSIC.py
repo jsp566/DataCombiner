@@ -1,13 +1,13 @@
 
 from datetime import datetime
 import util as util
-import enums as enums
+import src.enums as enums
 
 sqlcon = util.SQLcons["SQLite"]
 sourcefilefolder = util.SourceFileFolderName
 datasetid = enums.DatasetId.SIC
 
-import DataSaving.SourceFile as SourceFile
+import src.DataSaving.SourceFile as SourceFile
 
 # Create file id in DB
 downloadedFile = SourceFile.SourceFile(sqlcon, sourcefilefolder, datasetid)
@@ -15,7 +15,7 @@ downloadedFile.insertSourceFileIntoDB()
 
 
 # Download file ()
-import DataSaving.DataFetchers.SIC as SICFetcher
+import src.DataSaving.DataFetchers.SIC as SICFetcher
 fetcher = SICFetcher.SIC(sqlcon, sourcefilefolder)
 fetcher.downloadSourceFile(downloadedFile.path)
 

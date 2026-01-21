@@ -13,7 +13,7 @@ class SIC(DataFetcher.DataFetcher):
         super().__init__(connection, SourceFileFolder)
         self.DatasetId = enums.DatasetId.SIC
         self.name = "SIC"
-        #self.documentation = "https://www.six-group.com/en/products-services/banking-services/interbank-clearing/online-services/download-bank-master.html#tfl_XRzX2xpc3Q=/year/2025"
+        self.documentation = "https://www.six-group.com/en/products-services/banking-services/interbank-clearing/online-services/download-bank-master.html#tfl_XRzX2xpc3Q=/year/2025"
         self.keyColumns = ["iid"]
 
     def downloadSourceFile(self, filePath):
@@ -23,20 +23,47 @@ class SIC(DataFetcher.DataFetcher):
     def getValidFromDatetime(self, downloadedFile):
         with open(downloadedFile.path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        dateStr = data["validOn"]
-        downloadedFile.validFromDatetime = datetime.strptime(dateStr, "%Y-%m-%d")
+            dateStr = data["validOn"]
+            downloadedFile.validFromDatetime = datetime.strptime(dateStr, "%Y-%m-%d")
 
     def createDataRowGenerator(self, downloadedFile):
         with open(downloadedFile.path, "r", encoding="utf-8") as f:
             data = json.load(f)
         
-        for i, entry in enumerate(data["entries"], start=1):
-            indexInFile = i
-            key = ",".join([str(entry[col]) for col in self.keyColumns])
-            row = DataRow.DataRow(self.DatasetId, downloadedFile.SourceFileId, indexInFile, key, entry)
-            yield row
+            for i, entry in enumerate(data["entries"], start=1):
+                indexInFile = i
+                key = ",".join([str(entry[col]) for col in self.keyColumns])
+                row = DataRow.DataRow(self.DatasetId, downloadedFile.SourceFileId, indexInFile, key, entry)
+                yield row
             
 
     def interpretDataRow(self, row):
         # interpret the data row according to SIC dataset specifics
-        pass
+
+        # iid
+
+        # newIid
+
+        # sicIid
+
+        # headQuarters
+
+        # bankOrInstitutionName
+
+        # bic
+
+        # sicParticipation
+
+        # rtgsCustomerPaymentsChf
+
+        # ipCustomerPaymentsChf
+
+        # euroSicParticipation
+
+        # lsvBddChfParticipation
+
+        # lsvBddEurParticipation
+
+
+        raise NotImplementedError("This method should be overridden by subclasses?")
+

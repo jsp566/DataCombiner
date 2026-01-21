@@ -12,10 +12,10 @@ class DataFetcher:
         # Set by subclasses
         self.DatasetId = None
 
-    def downloadSourceFile(self, downloadedFile):
+    def downloadSourceFile(self, downloadedFilepath):
         raise NotImplementedError("This method should be overridden by subclasses")
 
-    def getValidFromDatetime(self, downloadedFile):
+    def getValidFromDatetime(self, downloadedFile): # maybe just path
         raise NotImplementedError("This method should be overridden by subclasses")
 
     def createDataRowGenerator(self, downloadedFile):
@@ -56,7 +56,7 @@ class DataFetcher:
     def getNewData(self):
         downloadedFile = self.getNewSourceFile()      
 
-        self.getValidFromTimestamp(downloadedFile)
+        self.getValidFromDatetime(downloadedFile)
 
         self.insertSourceFileRowsIntoDB(downloadedFile)
         
