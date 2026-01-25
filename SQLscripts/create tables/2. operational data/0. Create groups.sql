@@ -1,0 +1,6 @@
+CREATE TABLE "Data.Group" (
+	"Id"	INTEGER NOT NULL UNIQUE,
+	"ParentGoupId"	INTEGER NOT NULL,
+	PRIMARY KEY("GroupId" AUTOINCREMENT),
+    FOREIGN KEY("ParentGoupId") REFERENCES "Data.Group"("Id")	
+);

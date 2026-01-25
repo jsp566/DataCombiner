@@ -1,0 +1,7 @@
+CREATE TABLE "Enum.DataFormat" (
+	"Id"	INTEGER NOT NULL UNIQUE,
+	"Name"	TEXT NOT NULL UNIQUE,
+    "DatasetId" INTEGER, 
+	PRIMARY KEY("Id" AUTOINCREMENT),
+    FOREIGN KEY("DatasetId") REFERENCES "Enum.Dataset"("Id")
+);

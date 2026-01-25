@@ -1,0 +1,7 @@
+CREATE TABLE "Enum.DataField" (
+    "Id"	INTEGER NOT NULL,
+	"DataFormatId"	INTEGER NOT NULL,
+	"Name"	TEXT NOT NULL,
+	PRIMARY KEY("Id" AUTOINCREMENT)
+	FOREIGN KEY("DataFormatId") REFERENCES "Enum.DataFormat"("Id")
+);
