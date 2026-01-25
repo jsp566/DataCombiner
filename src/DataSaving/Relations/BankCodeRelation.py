@@ -6,15 +6,14 @@ class BankCodeRelation:
     def __init__(self, dataRow, bankCode, relationType):
         self.DataRow = dataRow
         self.bankCode = bankCode
-        self.relationTypeId = relationType
+        self.relationType = relationType
         self.GroupId = None
 
         self.TableName = util.TableNames["BankCodeRelations"]
 
-    
     def insertBankCodeRelationIntoDB(self, connection):
-        query = f"""INSERT INTO {self.TableName} (DataRow, BankCodeId, RelationTypeId, GroupId) VALUES (?, ?, ?, ?)"""
+        query = f"""INSERT INTO {self.TableName} (DataRowId, BankCodeId, RelationTypeId) VALUES (?, ?, ?)"""
         connection.execute(
-            query, (self.DataRow, self.bankCode.BankCodeId, self.relationType.value, self.GroupId)
+            query, (self.DataRow.DataRowId, self.bankCode.BankCodeId, self.relationType.value)
         )
         

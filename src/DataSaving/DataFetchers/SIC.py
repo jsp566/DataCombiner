@@ -29,41 +29,59 @@ class SIC(DataFetcher.DataFetcher):
     def createDataRowGenerator(self, downloadedFile):
         with open(downloadedFile.path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        
+
             for i, entry in enumerate(data["entries"], start=1):
                 indexInFile = i
                 key = ",".join([str(entry[col]) for col in self.keyColumns])
-                row = DataRow.DataRow(self.DatasetId, downloadedFile.SourceFileId, indexInFile, key, entry)
+                row = DataRow.DataRow(
+                    self.connection,
+                    self.DatasetId,
+                    downloadedFile.SourceFileId,
+                    indexInFile,
+                    key,
+                    entry,
+                )
                 yield row
-            
 
     def interpretDataRow(self, row):
         # interpret the data row according to SIC dataset specifics
+        if row.DataDict["entryType"] == "BankMaster":
+            # iid
+            iidObj = row.createBankCodeRelation(
+                row.DataDict["iid"],
+                enums.bankcodetype.IID,
+                enums.relationtype.SELF,
+            )
 
-        # iid
+            # newIid
 
-        # newIid
+            # sicIid
 
-        # sicIid
+            # headQuarters
 
-        # headQuarters
+            # bankOrInstitutionName
+            row.createBankCodeRelation(
+                row.DataDict["bankOrInstitutionName"],
+                enums.bankcodetype.NAME,
+                enums.relationtype.SELF,
+            )
 
-        # bankOrInstitutionName
+            # bic
+            if "bic" in row.DataDict:
+                row.interpretBIC(row.DataDict["bic"], enums.relationtype.SELF)
 
-        # bic
-
-        # sicParticipation
-
-        # rtgsCustomerPaymentsChf
-
-        # ipCustomerPaymentsChf
-
-        # euroSicParticipation
-
-        # lsvBddChfParticipation
-
-        # lsvBddEurParticipation
+            # sicParticipation
+            row.createNetworkRelation(iidObj, enums.Networks.SIC)
 
 
-        raise NotImplementedError("This method should be overridden by subclasses?")
+            # rtgsCustomerPaymentsChf
 
+            # ipCustomerPaymentsChf
+
+            # euroSicParticipation
+
+            # lsvBddChfParticipation
+
+            # lsvBddEurParticipation
+
+        

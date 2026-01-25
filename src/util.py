@@ -13,8 +13,9 @@ SQLcons = {"SQLite": sqlite3.connect('DataStorage/Database.db')}
 TableNames = {
     "SourceFiles": "SourceFiles",
     "DataRows": "DataRows",
-    "BankCodes": "BankCodes",
-    "BankCodeRelations": "BankCodeRelations",
+    "BankCodes": "'Data.BankCodes'",
+    "BankCodeRelations": "'Data.BankCodeRelations'",
+    "NetworkRelations": "'Data.NetworkRelation'",
 }
 
 class ColumnDescription:

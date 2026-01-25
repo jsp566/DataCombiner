@@ -1,13 +1,13 @@
 
 from datetime import datetime
 import util as util
-import src.enums as enums
+import enums as enums
 
 sqlcon = util.SQLcons["SQLite"]
 sourcefilefolder = util.SourceFileFolderName
 datasetid = enums.DatasetId.SIC
 
-import src.DataSaving.SourceFile as SourceFile
+import DataSaving.SourceFile as SourceFile
 
 # Create file id in DB
 downloadedFile = SourceFile.SourceFile(sqlcon, sourcefilefolder, datasetid)
@@ -15,7 +15,7 @@ downloadedFile.insertSourceFileIntoDB()
 
 
 # Download file ()
-import src.DataSaving.DataFetchers.SIC as SICFetcher
+import DataSaving.DataFetchers.SIC as SICFetcher
 fetcher = SICFetcher.SIC(sqlcon, sourcefilefolder)
 fetcher.downloadSourceFile(downloadedFile.path)
 
@@ -32,13 +32,13 @@ downloadedFile.addMetadataToDB()
 # Create bank code relations
 # Create network relation (networks should be pre-defined)
 
-fetcher.getValidFromTimestamp(downloadedFile)
+fetcher.getValidFromDatetime(downloadedFile)
 
 rowgenerator = fetcher.createDataRowGenerator(downloadedFile)
 
 rowCounter = 0
 for row in rowgenerator:
-    row.insertDataRowIntoDB(sqlcon)
+    row.insertDataRowIntoDB()
     fetcher.interpretDataRow(row)
     rowCounter += 1
 
@@ -47,6 +47,7 @@ downloadedFile.numRows = rowCounter
 downloadedFile.addMetadataToDB()
 
 downloadedFile.updateFileStatus(enums.FileStatus.Processed)
+sqlcon.commit()
 
 
 

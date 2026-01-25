@@ -3,7 +3,7 @@ from enum import Enum
 
 class Networks(Enum):
     # Define network types here
-    pass
+    SIC = 1
 # for networks, add native dataset id and currency
 
 class DatasetId(Enum):
@@ -38,6 +38,9 @@ class bankcodetype(Enum):
     BIC6 = 3
     BIC8 = 4
     BIC11 = 5
+    IID = 6
+    SICIID = 7
+
 # for other bank code types, add native dataset id and if it is groupable
 
 
